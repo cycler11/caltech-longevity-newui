@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { WavyBackground } from "../ui/wavy-background";
 import type { Event } from "@/types/events";
 import { getEvents } from "@/data/events";
@@ -20,8 +21,21 @@ import { getEvents } from "@/data/events";
 const DEFAULT_SPEAKER_IMAGE = "/events/default.png";
 
 function EventCard({ event }: { event: Event }) {
+  const router = useRouter();
+  const isHackaton = event.id === "hackaton-2026";
+
   return (
-    <Card className="glass overflow-hidden">
+    <Card
+      className={
+        "glass overflow-hidden" +
+        (isHackaton
+          ? " cursor-pointer transition-colors hover:border-white/20"
+          : "")
+      }
+      onClick={() => {
+        if (isHackaton) router.push("/hackaton");
+      }}
+    >
       <CardContent className="p-3 sm:p-6">
         <div className="flex flex-row sm:flex-col gap-3 sm:gap-6">
 
@@ -67,6 +81,7 @@ function EventCard({ event }: { event: Event }) {
                           href={speaker.social.linkedin}
                           target="_blank"
                           className="text-muted-foreground hover:text-primary"
+                          onClick={(e) => e.stopPropagation()}
                         >
                           <Linkedin className="w-4 h-4 sm:w-5 sm:h-5" />
                         </Link>
@@ -77,6 +92,7 @@ function EventCard({ event }: { event: Event }) {
                           href={speaker.social.twitter}
                           target="_blank"
                           className="text-muted-foreground hover:text-primary"
+                          onClick={(e) => e.stopPropagation()}
                         >
                           <Twitter className="w-4 h-4 sm:w-5 sm:h-5" />
                         </Link>
@@ -87,6 +103,7 @@ function EventCard({ event }: { event: Event }) {
                           href={speaker.social.github}
                           target="_blank"
                           className="text-muted-foreground hover:text-primary"
+                          onClick={(e) => e.stopPropagation()}
                         >
                           <Github className="w-4 h-4 sm:w-5 sm:h-5" />
                         </Link>
@@ -98,6 +115,7 @@ function EventCard({ event }: { event: Event }) {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 px-2 py-1 rounded-full border text-[11px] sm:text-xs text-muted-foreground hover:bg-accent"
+                          onClick={(e) => e.stopPropagation()}
                         >
                           <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4" />
                           <span>Luma</span>
@@ -132,7 +150,7 @@ function EventCard({ event }: { event: Event }) {
 
             {event.url && (
               <div className="mt-4">
-                <Link href={event.url} target="_blank">
+                <Link href={event.url} target="_blank" onClick={(e) => e.stopPropagation()}>
                   <Button size="sm" className="rounded-full px-4">
                     RSVP on Luma →
                   </Button>

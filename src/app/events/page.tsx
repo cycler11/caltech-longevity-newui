@@ -3,40 +3,35 @@
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { Calendar, MapPin, Linkedin, X, GithubIcon, Clock, ExternalLink, Filter } from "lucide-react";
+import { Calendar, MapPin, Linkedin, X, GithubIcon, Filter } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { WavyBackground } from "@/components/ui/wavy-background";
 import { getEvents } from "@/data/events";
 import { Event } from "@/types/events";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 
 const DEFAULT_SPEAKER_IMAGE = "/events/default.png";
 
-function getDaysUntil(dateStr: string | null): string {
-  if (!dateStr) return 'Date TBA';
-  
-  const eventDate = new Date(dateStr);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  
-  const diffTime = eventDate.getTime() - today.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
-  if (diffDays < 0) return 'Past Event';
-  if (diffDays === 0) return 'Today!';
-  if (diffDays === 1) return 'Tomorrow';
-  return `In ${diffDays} days`;
-}
-
 function EventCard({ event, variant = 'default' }: { event: Event; variant?: 'featured' | 'default' }) {
-  const daysUntil = getDaysUntil(event.date);
+  const router = useRouter();
   const isPast = event.isPast || (event.date && new Date(event.date) < new Date());
   const isFeatured = variant === 'featured';
+  const isHackaton = event.id === "hackaton-2026";
 
   return (
-    <Card className="glass overflow-hidden">
+    <Card
+      className={
+        "glass overflow-hidden" +
+        (isHackaton
+          ? " cursor-pointer transition-colors hover:border-white/20"
+          : "")
+      }
+      onClick={() => {
+        if (isHackaton) router.push("/hackaton");
+      }}
+    >
       <CardContent className="p-6">
         <div className="flex flex-col md:flex-row gap-6">
           {/* Image Section - Left side, proper size */}
@@ -69,6 +64,7 @@ function EventCard({ event, variant = 'default' }: { event: Event; variant?: 'fe
                           className="text-muted-foreground hover:text-primary transition-colors"
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
                         >
                           <Linkedin className="w-5 h-5" />
                         </Link>
@@ -79,6 +75,7 @@ function EventCard({ event, variant = 'default' }: { event: Event; variant?: 'fe
                           className="text-muted-foreground hover:text-primary transition-colors"
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
                         >
                           <X className="w-5 h-5" />
                         </Link>
@@ -89,6 +86,7 @@ function EventCard({ event, variant = 'default' }: { event: Event; variant?: 'fe
                           className="text-muted-foreground hover:text-primary transition-colors"
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
                         >
                           <GithubIcon className="w-5 h-5" />
                         </Link>
@@ -124,6 +122,7 @@ function EventCard({ event, variant = 'default' }: { event: Event; variant?: 'fe
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2"
+                  onClick={(e) => e.stopPropagation()}
                 >
                   RSVP Now
                   <span className="text-sm">→</span>
